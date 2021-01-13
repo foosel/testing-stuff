@@ -1,0 +1,6 @@
+docs:
+  - 'README.md'
+
+ci/cd:
+  - '.github/workflows/*'
+  - '.github/labeler.yml'
