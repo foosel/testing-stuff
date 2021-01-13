@@ -64,12 +64,11 @@ jobs:
                        + "[section on PRs in the Contribution Guidelines](https://github.com/OctoPrint/OctoPrint/blob/master/CONTRIBUTING.md#pull-requests) "
                        + "and make sure that your PR follows them. Thank you!";
 
-              await github.pulls.createReview({
+              await github.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                pull_number: number,
-                body: comment,
-                event: "REQUEST_CHANGES"
+                issue_number: number,
+                body: comment
               });
               await github.issues.addLabels({
                 owner: context.repo.owner,
@@ -77,4 +76,5 @@ jobs:
                 issue_number: number,
                 labels: [problem_label]
               });
+              core.setFailed("There are problems with the branches involving this PR");
             }
