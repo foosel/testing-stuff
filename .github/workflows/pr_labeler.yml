@@ -18,13 +18,21 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            let number = context.payload.pull_request.number;
+
+            let pr = await github.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: number
+            });
+
             let allowed_targets = ["maintenance", "devel", "staging/maintenance", "staging/devel"];
             let forbidden_sources = ["master", "maintenance", "devel"];
             let problem_label = "needs some work";
 
             let labels = [];
             let setLabels = false;
-            context.payload.pull_request.labels.forEach(label => { labels.push(label.name) });
+            pr.labels.forEach(label => { labels.push(label.name) });
 
             if (labels.includes('docs') || labels.includes('ci/cd') || labels.includes('meta')) {
               allowed_targets.push("master");
@@ -49,8 +57,6 @@ jobs:
 
             if (problems.length) {
               // Problems were detected, post comment and label accordingly
-              let number = context.payload.pull_request.number;
-
               let comment = "Hi @" + context.payload.pull_request.user.login + ",\n\n"
                           + "Thank you for your contribution! Sadly it looks like there "
                           + "is something wrong with this PR from your branch `"
@@ -64,13 +70,13 @@ jobs:
                        + "[section on PRs in the Contribution Guidelines](https://github.com/OctoPrint/OctoPrint/blob/master/CONTRIBUTING.md#pull-requests) "
                        + "and make sure that your PR follows them. Thank you!";
 
-              await github.issues.createComment({
+              github.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: number,
                 body: comment
               });
-              await github.issues.addLabels({
+              github.issues.addLabels({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: number,
