@@ -1,11 +1,79 @@
-name: "Pull Request Labeler"
+name: "Pull Request Automation"
 on:
-- pull_request_target
+  - pull_request_target
 
 jobs:
-  triage:
+  label:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/labeler@v3
-      with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+      - uses: actions/labeler@v3
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+
+  validate-branches:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v3.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            let allowed_targets = ["maintenance", "devel", "staging/maintenance", "staging/devel"];
+            let forbidden_sources = ["master", "maintenance", "devel"];
+            let problem_label = "needs some work";
+
+            let labels = [];
+            let setLabels = false;
+            context.payload.pull_request.labels.forEach(label => { labels.push(label.name) });
+
+            if (labels.includes('docs') || labels.includes('ci/cd') || labels.includes('meta')) {
+              allowed_targets.push("master");
+            }
+
+            let source = context.payload.pull_request.head.ref;
+            let target = context.payload.pull_request.base.ref;
+
+            let problems = [];
+            if (forbidden_sources.includes(source)) {
+              problems.push("Your PR's source branch `" + source + "` is among the "
+                          + "forbidden source branches: " + blacklisted_sources.join(", ")
+                          + ". Please always create PRs from a custom branch in your "
+                          + "repository to avoid accidental commits making it into "
+                          + "your PR.");
+            }
+            if (!allowed_targets.includes(target)) {
+              problems.push("Your PR's target branch `" + target + "` is not among the
+                          + "allowed target branches: " + allowed_targets.join(", ")
+                          + ". Please only create your PRs against these.");
+            }
+
+            if (problems.length) {
+              // Problems were detected, post comment and label accordingly
+              let number = context.payload.pull_request.number;
+
+              let comment = "Hi @" + context.payload.pull_request.user.login + ",\n\n"
+                          + "Thank you for your contribution! Sadly it looks like there
+                          + "is something wrong with this PR from your branch `"
+                          + source + " to OctoPrint:" + target + ":\n\n";
+
+              problems.forEach(problem => {
+                comment += "  * " + problem + "\n";
+              });
+
+              comment += "\n\nPlease take a look at the "
+                       + "[section on PRs in the Contribution Guidelines](https://github.com/OctoPrint/OctoPrint/blob/master/CONTRIBUTING.md#pull-requests) "
+                       + "and make sure that your PR follows them. Thank you!";
+
+              await github.pulls.createReview({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: number,
+                body: comment,
+                event: "REQUEST_CHANGES"
+              });
+              await github.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: number,
+                labels: [problem_label]
+              });
+            }
