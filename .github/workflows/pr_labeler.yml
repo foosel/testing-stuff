@@ -18,9 +18,10 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            let number = context.payload.pull_request.number;
+            const number = context.payload.pull_request.number;
 
-            let pr = await github.pulls.get({
+            // Get current PR data (the data in the context might be outdated)
+            const { data: pr } = await github.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: number
@@ -28,7 +29,7 @@ jobs:
 
             let allowed_targets = ["maintenance", "devel", "staging/maintenance", "staging/devel"];
             let forbidden_sources = ["master", "maintenance", "devel"];
-            let problem_label = "needs some work";
+            const problem_label = "needs some work";
 
             let labels = [];
             let setLabels = false;
@@ -38,8 +39,8 @@ jobs:
               allowed_targets.push("master");
             }
 
-            let source = context.payload.pull_request.head.ref;
-            let target = context.payload.pull_request.base.ref;
+            const source = context.payload.pull_request.head.ref;
+            const target = context.payload.pull_request.base.ref;
 
             let problems = [];
             if (forbidden_sources.includes(source)) {
