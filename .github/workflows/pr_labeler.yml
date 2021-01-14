@@ -10,7 +10,7 @@ jobs:
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
 
-  validate-branches:
+  validate:
     runs-on: ubuntu-latest
     needs: label
     steps:
@@ -26,7 +26,6 @@ jobs:
               repo: context.repo.repo,
               pull_number: number
             });
-            console.log(pr);
 
             let allowed_targets = ["maintenance", "devel", "staging/maintenance", "staging/devel"];
             let forbidden_sources = ["master", "maintenance", "devel"];
@@ -35,28 +34,40 @@ jobs:
             let labels = [];
             let setLabels = false;
             pr.labels.forEach(label => { labels.push(label.name) });
-            console.log("PR labels are " + labels.join(", "));
+            core.info("PR labels are " + labels.join(", "));
 
             if (labels.includes('docs') || labels.includes('ci/cd') || labels.includes('meta')) {
-              allowed_targets.push("master");
-              allowed_targets.push("main");
+              allowed_targets.unshift("main");
+              allowed_targets.unshift("master");
             }
 
             const source = context.payload.pull_request.head.ref;
             const target = context.payload.pull_request.base.ref;
+            core.info("PR source is " + source);
+            core.info("PR target is " + target);
 
             let problems = [];
+
+            if (pr.body.trim() === "") {
+              problems.push("Your PR does have an empty description. Please explain what "
+                          + "your PR does, how you've tested your changes, etc.");
+              core.error("PR has an empty description");
+            }
+
             if (forbidden_sources.includes(source)) {
               problems.push("Your PR's source branch `" + source + "` is among the "
                           + "forbidden source branches: " + blacklisted_sources.join(", ")
                           + ". Please always create PRs from a custom branch in your "
                           + "repository to avoid accidental commits making it into "
                           + "your PR.");
+              core.error("PR's source branch is among the forbidden source branches");
             }
+
             if (!allowed_targets.includes(target)) {
               problems.push("Your PR's target branch `" + target + "` is not among the "
                           + "allowed target branches: " + allowed_targets.join(", ")
                           + ". Please only create your PRs against these.");
+              core.error("PR's target branch is not among the allowed target branches");
             }
 
             if (problems.length) {
@@ -86,5 +97,6 @@ jobs:
                 issue_number: number,
                 labels: [problem_label]
               });
-              core.setFailed("There are problems with the branches involving this PR");
+
+              core.setFailed("This PR has not passed validation");
             }
