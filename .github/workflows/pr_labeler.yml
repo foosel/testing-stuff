@@ -26,6 +26,7 @@ jobs:
               repo: context.repo.repo,
               pull_number: number
             });
+            console.log(pr);
 
             let allowed_targets = ["maintenance", "devel", "staging/maintenance", "staging/devel"];
             let forbidden_sources = ["master", "maintenance", "devel"];
@@ -34,9 +35,11 @@ jobs:
             let labels = [];
             let setLabels = false;
             pr.labels.forEach(label => { labels.push(label.name) });
+            console.log("PR labels are " + labels.join(", "));
 
             if (labels.includes('docs') || labels.includes('ci/cd') || labels.includes('meta')) {
               allowed_targets.push("master");
+              allowed_targets.push("main");
             }
 
             const source = context.payload.pull_request.head.ref;
