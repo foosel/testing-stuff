@@ -17,11 +17,11 @@ ignored_titles:
   - '[RC Feedback]'
   - 'Feature Request'
 ignored_authors:
-  - @OctoPrint/octoprint-maintainers
-  - @OctoPrint/octoprint-triage
-  - sentry-io
-  - FormerLurker
-  - bzed
+  - '@OctoPrint/octoprint-maintainers'
+  - '@OctoPrint/octoprint-triage'
+  - 'sentry-io'
+  - 'FormerLurker'
+  - 'bzed'
 
 text_reminder: |
   Hi @@AUTHOR@@, 
