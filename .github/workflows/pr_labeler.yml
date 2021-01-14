@@ -1,12 +1,7 @@
 name: "Pull Request Automation"
 on:
   pull_request_target:
-    - opened
-    - synchronize
-    - reopened
-    - edited
-    - labeled
-    - unlabeled
+    types: ["opened", "synchronize", "reopened", "edited", "labeled", "unlabeled"]
 
 jobs:
   label:
@@ -43,7 +38,6 @@ jobs:
             core.info("PR labels are " + labels.join(", "));
 
             if (labels.includes('docs') || labels.includes('ci/cd') || labels.includes('meta')) {
-              allowed_targets.unshift("main");
               allowed_targets.unshift("master");
             }
 
