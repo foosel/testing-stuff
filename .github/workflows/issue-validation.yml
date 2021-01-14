@@ -1,0 +1,12 @@
+name: "Issue validator"
+on:
+  issues:
+    types: ["opened", "edited"]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: OctoPrint/actions/issue-validation@dev
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
