@@ -10,3 +10,4 @@ jobs:
     - uses: OctoPrint/actions/issue-validation@dev
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        dry-run: true
