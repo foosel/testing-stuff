@@ -17,7 +17,6 @@ ignored_titles:
   - '[RC Feedback]'
   - 'Feature Request'
 ignored_authors:
-  - '@OctoPrint'
   - 'sentry-io'
   - 'FormerLurker'
   - 'bzed'
