@@ -21,7 +21,7 @@ ignored_authors:
   - 'FormerLurker'
   - 'bzed'
 
-validation_comment: |
+validation_comment: >
   Hi @@AUTHOR@@, 
   
   it looks like there is some **information missing** from your bug report that will
