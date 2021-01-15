@@ -15,7 +15,6 @@ jobs:
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         query: 'is:issue is:open label:incomplete created:<${{ steps.date.outputs.CUTOFF }}'
-        dry-run: true
         comment: >
           Since apparently some of the required information is still missing, this will be
           closed now, sorry. Feel free to request a reopen of this or create a new issue
