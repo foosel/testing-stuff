@@ -10,7 +10,7 @@ jobs:
     steps:
     - id: date
       run: |
-        echo "::set-output name=CUTOFF::`date --date='1 hour ago' +'%Y-%m-%dT%H:%M:%S'`"
+        echo "::set-output name=CUTOFF::`date --date='1 hour ago' +'%Y-%m-%dT%H:%M:%S%z'`"
     - uses: OctoPrint/actions/close-by-query@dev
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
