@@ -14,7 +14,7 @@ jobs:
     - uses: OctoPrint/actions/close-by-query@dev
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
-        query: 'is:issue is:open label:incomplete created:<${{ steps.date.outputs.CUTOFF }}'
+        query: 'repo:foosel/testing-stuff is:issue is:open label:incomplete created:<${{ steps.date.outputs.CUTOFF }}'
         dry-run: true
         comment: >
           Since apparently some of the required information is still missing, this will be
