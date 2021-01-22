@@ -31,7 +31,7 @@ jobs:
               }
             };
 
-            if (bundles) {
+            if (bundles.length > 0) {
               let text = comment + botMarker + "\n\n---\n\n\nBundles:\n\n";
               bundles.forEach((bundle) => {
                 text += "  * [" + bundle.filename + "](https://bundleviewer.octoprint.org/?url=" + encodeURIComponent(bundle.link) + ")\n"
