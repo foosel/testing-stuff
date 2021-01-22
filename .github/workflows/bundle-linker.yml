@@ -23,7 +23,8 @@ jobs:
             if (bundles) {
               let text = "I found the following bundles:\n\n";
               bundles.forEach((bundle) => {
-                text += "  * [" + bundle.filename + "](https://bundleviewer.octoprint.org/?url=" + encodeURIComponent(bundle.link) + ")"
+                text += "  * [" + bundle.filename + "](https://bundleviewer.octoprint.org/?url=" + encodeURIComponent(bundle.link) + ")";
+              });
 
               github.issues.createComment({
                 owner: context.repo.owner,
