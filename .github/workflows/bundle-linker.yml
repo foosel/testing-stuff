@@ -22,9 +22,13 @@ jobs:
             const bundleRegex = /\[(octoprint-systeminfo-\d{14}\.zip)\]\(([^)]+)\)/g;
 
             const bundles = [];
+            const seen = [];
             const matches = comment.matchAll(bundleRegex);
             for (const match of matches) {
-              bundles.push({filename: match[1], link: match[2], match: match[0]});
+              if (!seen.includes(match[1])) {
+                bundles.push({filename: match[1], link: match[2], match: match[0]});
+                seen.push(match[1]);
+              }
             };
 
             if (bundles) {
