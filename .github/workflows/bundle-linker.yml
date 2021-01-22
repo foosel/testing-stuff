@@ -16,9 +16,9 @@ jobs:
 
             const bundles = [];
             const matches = comment.matchAll(bundleRegex);
-            matches.forEach((match) => {
+            for (const match of matches) {
               bundles.push({filename: match.group(1), link: match.group(2)});
-            });
+            };
 
             if (bundles) {
               let text = "I found the following bundles:\n\n";
