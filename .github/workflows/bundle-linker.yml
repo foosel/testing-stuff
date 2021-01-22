@@ -1,7 +1,7 @@
 name: "Linkify systeminfo bundles"
 on:
   issue_comment:
-    types: [created]
+    types: [created, edited]
 
 jobs:
   linkifyBundles:
@@ -17,19 +17,27 @@ jobs:
             const bundles = [];
             const matches = comment.matchAll(bundleRegex);
             for (const match of matches) {
-              bundles.push({filename: match[1], link: match[2]});
+              bundles.push({filename: match[1], link: match[2], match: match[0]});
             };
 
             if (bundles) {
-              let text = "I found the following bundles:\n\n";
-              bundles.forEach((bundle) => {
-                text += "  * [" + bundle.filename + "](https://bundleviewer.octoprint.org/?url=" + encodeURIComponent(bundle.link) + ")"
-              });
+              let text = comment;
+              const botMarker = "<!-- linkify_bundles -->";
+              const botWasHere = comment.indexOf(botMarker);
+              if (botWasHere !== -1) {
+                text = text.substring(0, botWasHere);
+              };
 
-              github.issues.createComment({
+              text += botMarker + "\n\n---\n\n\nBundles:\n\n";
+              bundles.forEach((bundle) => {
+                text += "  * [" + bundle.filename + "](https://bundleviewer.octoprint.org/?url=" + encodeURIComponent(bundle.link) + ")\n"
+              });
+              text += "\n*edited by @github-actions to add bundle viewer links*\n";
+
+              github.issues.updateComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.issue.number,
+                comment_id: context.payload.comment.id,
                 body: text
               });
             }
