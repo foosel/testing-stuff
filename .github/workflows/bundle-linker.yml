@@ -1,4 +1,4 @@
-name: "Bundle Linker"
+name: "Linkify systeminfo bundles"
 on:
   issue_comment:
     types: [created]
@@ -12,7 +12,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const comment = context.payload.comment.body;
-            const bundleRegex = /\[(octoprint-systeminfo-\d{14}\.zip)\]\(([^)]+)\)/;
+            const bundleRegex = /\[(octoprint-systeminfo-\d{14}\.zip)\]\(([^)]+)\)/g;
 
             const bundles = [];
             const matches = comment.matchAll(bundleRegex);
@@ -23,7 +23,7 @@ jobs:
             if (bundles) {
               let text = "I found the following bundles:\n\n";
               bundles.forEach((bundle) => {
-                text += "  * [" + bundle.filename + "](https://bundleviewer.octoprint.org/?url=" + encodeURIComponent(bundle.link) + ")";
+                text += "  * [" + bundle.filename + "](https://bundleviewer.octoprint.org/?url=" + encodeURIComponent(bundle.link) + ")"
               });
 
               github.issues.createComment({
