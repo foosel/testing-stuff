@@ -11,7 +11,14 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const comment = context.payload.comment.body;
+            let comment = context.payload.comment.body;
+
+            const botMarker = "<!-- linkify_bundles -->";
+            const botWasHere = comment.indexOf(botMarker);
+            if (botWasHere !== -1) {
+              comment = comment.substring(0, botWasHere);
+            };
+
             const bundleRegex = /\[(octoprint-systeminfo-\d{14}\.zip)\]\(([^)]+)\)/g;
 
             const bundles = [];
@@ -21,14 +28,7 @@ jobs:
             };
 
             if (bundles) {
-              let text = comment;
-              const botMarker = "<!-- linkify_bundles -->";
-              const botWasHere = comment.indexOf(botMarker);
-              if (botWasHere !== -1) {
-                text = text.substring(0, botWasHere);
-              };
-
-              text += botMarker + "\n\n---\n\n\nBundles:\n\n";
+              let text = comment + botMarker + "\n\n---\n\n\nBundles:\n\n";
               bundles.forEach((bundle) => {
                 text += "  * [" + bundle.filename + "](https://bundleviewer.octoprint.org/?url=" + encodeURIComponent(bundle.link) + ")\n"
               });
