@@ -1,6 +1,6 @@
 name: "Bundle Linker"
 on:
-  issue-comment:
+  issue_comment:
     types: [created]
 
 jobs:
