@@ -7,29 +7,33 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-    - uses: OctoPrint/actions/check-for-bundle@main
-      id: check
+    - uses: OctoPrint/actions/count-bundles@main
+      id: count-bundles
       with:
         body: ${{ github.event.issue.body }}
     - run: |
-        echo "Check result: ${{ steps.check.outputs.result }}"
+        echo "Bundle count: ${{ steps.count-bundles.outputs.count }}"
     - uses: OctoPrint/actions/comment-or-delete@main
       with:
         issue_number: ${{ github.event.issue.number }}
         marker: "<!-- comment_bundle_missing -->"
-        body: |
+        body: >
           Hi @${{ github.event.issue.user.login }}!
 
 
-          It looks like you didn't upload a [system info bundle]() as requested by the template.
+          It looks like you didn't upload a [system info bundle](https://community.octoprint.org/t/29887) as requested by the template.
           A bundle is required to further process your issue. It contains important logs and
           system information to be able to put your issue into context and give pointers as to
-          how it happened.
+          what has happened.
 
 
-          Please upload a bundle in your issue - no cloud links please, the data needs to be
-          available right in the issue. Otherwise your issue will be closed.
+          Please upload a bundle zip file to the original issue post. Actually upload the file please and 
+          do not paste some link to a cloud provider, we want to have everything in one place here. 
+          
+
+          Without the availability of a bundle, your issue will have to be closed.
+
 
           Thank you for your collaboration.
           <!-- comment_bundle_missing -->
-        condition: ${{ !steps.check.outputs.result }}
+        condition: ${{ steps.count-bundles.outputs.count == 0 }}
