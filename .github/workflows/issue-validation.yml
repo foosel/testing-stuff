@@ -15,7 +15,7 @@ jobs:
         echo "Check result: ${{ steps.check.outputs.result }}"
     - uses: OctoPrint/actions/comment-or-delete@main
       with:
-        issue: ${{ github.event.issue.number }}
+        issue_number: ${{ github.event.issue.number }}
         marker: "<!-- comment_bundle_missing -->"
         body: |
           Hi @${{ github.event.issue.user.login }}!
