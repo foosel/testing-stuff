@@ -1,4 +1,4 @@
-name: "Issue validator"
+name: "Check for bundle"
 on:
   issues:
     types: ["opened", "edited"]
@@ -7,7 +7,27 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-    - uses: OctoPrint/actions/issue-validation@dev
+    - uses: OctoPrint/actions/check-for-bundle@main
+      id: check
       with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
-        dry-run: true
+        body: ${{ context.payload.issue.body }}
+    - uses: OctoPrint/actions/comment-or-delete@main
+      with:
+        issue: ${{ context.payload.issue.number }}
+        marker: "<!-- comment_bundle_missing -->"
+        body: |
+          Hi @${{ context.payload.issue.user.login }}!
+
+
+          It looks like you didn't upload a [system info bundle]() as requested by the template.
+          A bundle is required to further process your issue. It contains important logs and
+          system information to be able to put your issue into context and give pointers as to
+          how it happened.
+
+
+          Please upload a bundle in your issue - no cloud links please, the data needs to be
+          available right in the issue. Otherwise your issue will be closed.
+
+          Thank you for your collaboration.
+          <!-- comment_bundle_missing -->
+        condition: ${{ !steps.check.outputs.result }}
