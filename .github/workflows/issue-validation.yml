@@ -36,7 +36,7 @@ jobs:
           console.log("REMINDER", REMINDER);
           console.log("context", context);
 
-          const matches = context.issue.body.matchAll(bundleRegex);
+          const matches = context.payload.issue.body.matchAll(bundleRegex);
 
           console.log("Bundle match count", matches.length);
 
