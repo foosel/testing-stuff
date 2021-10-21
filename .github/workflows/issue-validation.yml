@@ -10,10 +10,10 @@ jobs:
     - uses: OctoPrint/actions/check-for-bundle@main
       id: check
       with:
-        body: ${{ context.payload.issue.body }}
+        body: ${{ github.event.issue.body }}
     - uses: OctoPrint/actions/comment-or-delete@main
       with:
-        issue: ${{ context.payload.issue.number }}
+        issue: ${{ github.event.issue.number }}
         marker: "<!-- comment_bundle_missing -->"
         body: |
           Hi @${{ context.payload.issue.user.login }}!
