@@ -16,7 +16,7 @@ jobs:
         issue: ${{ github.event.issue.number }}
         marker: "<!-- comment_bundle_missing -->"
         body: |
-          Hi @${{ context.payload.issue.user.login }}!
+          Hi @${{ github.event.issue.user.login }}!
 
 
           It looks like you didn't upload a [system info bundle]() as requested by the template.
