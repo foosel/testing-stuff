@@ -46,7 +46,7 @@ jobs:
           const comment = comments.data.find(c => c.user.login === "github-actions" && c.body.includes(marker));
           console.log("Comment", comment);
 
-          comments.forEach(c => console.log("Comment author", c.user));
+          comments.data.forEach(c => console.log("Comment author", c.user));
 
           const found = !!context.payload.issue.body.match(bundleRegex);
           console.log("found", found);
