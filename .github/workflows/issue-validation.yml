@@ -34,6 +34,7 @@ jobs:
           const marker = "<!-- check_for_bundle -->";
 
           console.log("REMINDER", REMINDER);
+          console.log("context", context);
 
           const matches = context.issue.body.matchAll(bundleRegex);
 
