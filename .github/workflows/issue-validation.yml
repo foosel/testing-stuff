@@ -35,23 +35,25 @@ jobs:
           const bundleRegex = /\[(octoprint-systeminfo-\d{14}\.zip)\]\(([^)]+)\)/g;
           const marker = "<!-- check_for_bundle -->";
 
-          console.log("REMINDER", REMINDER);
-          console.log("context", context);
+          const issueLabels = await github.rest.issues.listLabelsOnIssue({
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            issue_number: github.context.issue.number
+          });
+          const labels = issueLabels.map(label => label.name);
+
+          if (!labels.includes("bug")) {
+            return;
+          }
 
           const comments = await github.rest.issues.listComments({
             owner: context.repo.owner,
             repo: context.repo.repo,
             issue_number: context.issue.number,
           })
-          console.log("comments", comments);
-
           const comment = comments.data.find(c => c.user.login === "github-actions[bot]" && c.body.includes(marker));
-          console.log("Comment", comment);
-
-          comments.data.forEach(c => console.log("Comment author", c.user));
 
           const found = !!context.payload.issue.body.match(bundleRegex);
-          console.log("found", found);
 
           if (!found) {
             const text = REMINDER + "\n" + marker;
