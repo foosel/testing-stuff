@@ -40,8 +40,7 @@ jobs:
             repo: context.repo.repo,
             issue_number: context.issue.number
           });
-          console.log(issueLabels)
-          const labels = issueLabels.map(label => label.name);
+          const labels = issueLabels.data.map(label => label.name);
 
           if (!labels.includes("bug")) {
             return;
