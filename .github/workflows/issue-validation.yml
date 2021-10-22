@@ -55,7 +55,7 @@ jobs:
 
           if (!found) {
             const text = REMINDER + "\n" + marker;
-            if (comment) {
+            if (comment && comment.body !== text) {
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -72,10 +72,12 @@ jobs:
             }
           } else if (found && comment) {
             const text = REMINDER.split("\n\n").map(line => `~~${line}~~`).join("\n\n") + "\n\n" + THANKYOU + "\n" + marker;
-            await github.rest.issues.updateComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: comment.id,
-              body: text
-            });
+            if (comment.body !== text) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment.id,
+                body: text
+              });
+            }
           }
