@@ -50,6 +50,7 @@ jobs:
           const comment = comments.data.find(c => c.user.login === "github-actions[bot]" && c.body.includes(marker));
 
           if (!labels.includes("bug")) {
+            console.log("No label, deleting comment if needed");
             if (comment) {
               await github.rest.issues.deleteComment({
                 owner: context.repo.owner,
@@ -63,6 +64,7 @@ jobs:
           const found = !!context.payload.issue.body.match(bundleRegex);
 
           if (!found) {
+            console.log("No bundle found, posting/updating reminder");
             const text = REMINDER + "\n" + marker;
             if (comment && comment.body !== text) {
               await github.rest.issues.updateComment({
@@ -80,6 +82,7 @@ jobs:
               });
             }
           } else if (found && comment) {
+            console.log("Bundle found, saying thanks");
             const text = REMINDER.split("\n\n").map(line => `~~${line.trim()}~~`).join("\n\n") + "\n\n" + THANKYOU + "\n" + marker;
             if (comment.body !== text) {
               await github.rest.issues.updateComment({
