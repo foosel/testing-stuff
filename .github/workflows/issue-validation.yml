@@ -27,9 +27,11 @@ jobs:
 
 
           Thank you for your collaboration.
+        THANKYOU: >
+          Thank you @${{ github.event.issue.user.login }} for adding a bundle! Now this can actually get looked at.
       with:
         script: |
-          const { REMINDER } = process.env;
+          const { REMINDER, THANKYOU } = process.env;
           const bundleRegex = /\[(octoprint-systeminfo-\d{14}\.zip)\]\(([^)]+)\)/g;
           const marker = "<!-- check_for_bundle -->";
 
@@ -51,17 +53,29 @@ jobs:
           const found = !!context.payload.issue.body.match(bundleRegex);
           console.log("found", found);
 
-          if (!found && !comment) {
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: REMINDER + "\n" + marker
-            });
+          if (!found) {
+            const text = REMINDER + "\n" marker;
+            if (comment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment.id,
+                body: text
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: text
+              });
+            }
           } else if (found && comment) {
-            await github.rest.issues.deleteComment({
+            const text = REMINDER.split("\n\n").map(line => `~~{line}~~`).join("\n\n") + "\n\n" + THANKYOU + "\n" + marker;
+            await github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              comment_id: comment.id
+              comment_id: comment.id,
+              body: text
             });
           }
