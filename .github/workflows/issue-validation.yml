@@ -54,7 +54,7 @@ jobs:
           console.log("found", found);
 
           if (!found) {
-            const text = REMINDER + "\n" marker;
+            const text = REMINDER + "\n" + marker;
             if (comment) {
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,
