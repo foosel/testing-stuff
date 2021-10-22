@@ -1,7 +1,7 @@
 name: "Check for bundle"
 on:
   issues:
-    types: ["opened", "edited"]
+    types: ["opened", "edited", "labeled", "unlabeled"]
 
 jobs:
   validate:
@@ -42,16 +42,23 @@ jobs:
           });
           const labels = issueLabels.data.map(label => label.name);
 
-          if (!labels.includes("bug")) {
-            return;
-          }
-
           const comments = await github.rest.issues.listComments({
             owner: context.repo.owner,
             repo: context.repo.repo,
             issue_number: context.issue.number,
           })
           const comment = comments.data.find(c => c.user.login === "github-actions[bot]" && c.body.includes(marker));
+
+          if (!labels.includes("bug")) {
+            if (comment) {
+              await github.rest.issues.deleteComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment.id,
+              })
+            }
+            return;
+          }
 
           const found = !!context.payload.issue.body.match(bundleRegex);
 
