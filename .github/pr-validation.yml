@@ -11,3 +11,6 @@ labels:
     additional_allowed_targets: ['main', 'master']
   ci/cd:
     additional_allowed_targets: ['main', 'master']
+
+check_can_modify: true
+create_review: true
