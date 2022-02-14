@@ -18,4 +18,4 @@ jobs:
       - uses: OctoPrint/actions/pr-validation@dev
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          dry-run: true
+          dry-run: false
