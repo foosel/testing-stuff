@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Created dummy files
         run: |
-          mkdir dist
+          mkdir dist && cd dist
           echo "foo" > foo.txt
           echo "bar" > bar.txt
       
@@ -20,6 +20,7 @@ jobs:
         run: |
           UPLOAD_URL="https://uploads.github.com/repos/${{ github.repository }}/releases/${{ github.event.release.id }}/assets"
           for file in dist/*; do
+            [ -e "$file" ] || exit 1
             echo "Uploading $file..."
             curl -s -XPOST \
               -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
