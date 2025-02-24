@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  tag:
+  tag-test:
     runs-on: ubuntu-latest
     steps:
       - name: 🔍️ Determine metadata
@@ -15,6 +15,11 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: test/test
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
 
       - name: 🔖 Add additional tags
         uses: actions/github-script@v7
