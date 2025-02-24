@@ -60,3 +60,8 @@ jobs:
             })
 
             core.setOutput("tags", tags.join(","));
+      
+      - name: Blub
+        run: |
+          echo "hello world"
+        shell: bash
