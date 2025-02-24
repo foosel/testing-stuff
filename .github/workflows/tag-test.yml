@@ -34,8 +34,8 @@ jobs:
             const regex = /v?(?<major>[\d]+)\.(?<minor>[\d]+)\.(?<patch>[\d]+)/;
             const match = tag.match(regex);
             if (!match) {
-            core.warning(`Tag ${tag} doesn't match vX.Y.Z or X.Y.Z, can't proceed.`);
-            return;
+              core.warning(`Tag ${tag} doesn't match vX.Y.Z or X.Y.Z, can't proceed.`);
+              return;
             }
 
             const full = match.shift();
@@ -44,20 +44,20 @@ jobs:
             
             const tags = [`${prefix}${major}.${minor}`, `${prefix}${major}`]
             tags.forEach(t => {
-            core.info(`Creating/updating additional tag ${t}...`)
+              core.info(`Creating/updating additional tag ${t}...`)
 
-            const data = {
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                ref: 'refs/tags/' + t,
-                sha: context.sha
-            };
+              const data = {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: 'refs/tags/' + t,
+                  sha: context.sha
+              };
 
-            github.rest.git.createRef(data).catch(err => {
-                if (err.status !== 422) throw err;
-                github.rest.git.updateRef(data)
-            })
-            })
+              github.rest.git.createRef(data).catch(err => {
+                  if (err.status !== 422) throw err;
+                  github.rest.git.updateRef({...data, ref: 'tags/' + t})
+              });
+            });
 
             core.setOutput("tags", tags.join(","));
       
