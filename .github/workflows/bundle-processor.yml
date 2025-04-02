@@ -14,5 +14,5 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repo: ${{ github.repository }}
           comment: ${{ github.event.comment.id }}
-          issue: ${{ github.event.issue.id }}
+          issue: ${{ github.event.issue.number }}
           body: ${{ github.event_name == 'issue_comment' && github.event.comment.body || github.event.issue.body }}
